@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="SOAPSaver : Machinery to Validate and Conform SOAP on your server" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>SOAPSaver</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/bpanahij/SOAPSaver">View on GitHub</a>
+
+          <h1 id="project_title">SOAPSaver</h1>
+          <h2 id="project_tagline">Machinery to Validate and Conform SOAP on your server</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/bpanahij/SOAPSaver/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/bpanahij/SOAPSaver/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>SOAP Saver</h3>
+
+<p>SOAP Saver is designed to allow the programmer to configure Structure, Transformations, and Validation of a SOAP method, or several methods. Yes, there are standards, like XSDs and WSDLs, which when combined with configurators, will create a class defining the SOAP connections; However, they don't facilitate customization, and sometimes the WSDL or XSD you may receive is incomplete or even inaccurate. This class will allow you to set up each and every detail of your SOAP calls. </p>
+
+<h3>Usage</h3>
+
+<p>As an example, above, you can configure an extension of the base class to define the children and parameters/attributes of the element tag. Or you can define an element as containing an array of identical children tags.</p>
+
+<h4>Set Up Enumerated Types</h4>
+
+<p>Enumerated Types can be shared across Element definitions by simply creating a go-between class, defining those types. The name must follow syntax convention of some unique name followed by "Type".</p>
+
+<div class="highlight">
+<pre><span class="x">class SerializableRecord extends objSOAPTypes {</span>
+<span class="x">    public function __construct($xml = false) {</span>
+<span class="x">        $enumTypes = array(</span>
+<span class="x">            "YesNoType" =&gt; array(</span>
+<span class="x">                "Yes" =&gt; "Y",</span>
+<span class="x">                "No" =&gt; "N",</span>
+<span class="x">                "Y" =&gt; "Y",</span>
+<span class="x">                "N" =&gt; "N",</span>
+<span class="x">                "CATCHALL" =&gt; "N",),</span>
+<span class="x">            "ProductCodeType" =&gt; array(</span>
+<span class="x">                "RPT" =&gt; "RPT",</span>
+<span class="x">                "CATCHALL" =&gt; "RPT",),</span>
+<span class="x">            "OccupationType" =&gt; array(</span>
+<span class="x">                "FULL TIME" =&gt; "OF",</span>
+<span class="x">                "PART TIME" =&gt; "OF",</span>
+<span class="x">                "SELF-EMPLOYED" =&gt; "OB",</span>
+<span class="x">                "RETIRED" =&gt; "RT",</span>
+<span class="x">                "UNEMPLOYED" =&gt; "UN",</span>
+<span class="x">                "DISABLED" =&gt; "UI",</span>
+<span class="x">                "STUDENT" =&gt; "ST",</span>
+<span class="x">                "MILITARY" =&gt; "EM",</span>
+<span class="x">                "HOMEMAKER" =&gt; "HM",</span>
+<span class="x">                "CATCHALL" =&gt; "OT",),</span>
+<span class="x">            "ResidenceType" =&gt; array(</span>
+<span class="x">                "OWN" =&gt; "H",</span>
+<span class="x">                "RENT" =&gt; "R",</span>
+<span class="x">                "OTHER" =&gt; "M",</span>
+<span class="x">                "PARENTS" =&gt; "P",),</span>
+<span class="x">            );</span>
+<span class="x">        $this-&gt;defineEnumeratedTypes($enumTypes);</span>
+<span class="x">        parent::__construct();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre>
+</div>
+
+
+<h4>Example 1</h4>
+
+<p>Setting up a basic Request Element, with attributes and children elements. Notice the type definitions, and  the required and nillable configurations.</p>
+
+<div class="highlight">
+<pre><span class="x">class LiquidCreditRequest extends SerializableRecord {</span>
+<span class="x">    public function __construct() {</span>
+<span class="x">        $this-&gt;setParameters(array(</span>
+<span class="x">    "submission_xref_id" =&gt;     array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "product_category_id" =&gt;    array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "resubmission_id" =&gt;        array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "customer_id" =&gt;        array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),));</span>
+<span class="x">        $this-&gt;setChildren(array(</span>
+<span class="x">    "transaction_note" =&gt;       array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "loan_amount" =&gt;        array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "loan_term" =&gt;          array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "loan_pmt" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "loan_down_pmt" =&gt;      array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "loan_purpose" =&gt;       array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "monthly_pmt_adjustment" =&gt; array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "lease_info" =&gt;         array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "LeaseInfo"),</span>
+<span class="x">    "vendor_info" =&gt;        array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "VendorInfo"),</span>
+<span class="x">    "vehicle_info" =&gt;       array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "VehicleInfo"),</span>
+<span class="x">    "principal_list" =&gt;     array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "PrincipalList"),</span>
+<span class="x">    "business_info" =&gt;      array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "BusinessInfo"),</span>
+<span class="x">    "transaction_parameters" =&gt; array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "TransactionParameters"),));</span>
+<span class="x">        parent::__construct();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre>
+</div>
+
+
+<h4>Example 2</h4>
+
+<p>Notice how this element has an array element as a child.</p>
+
+<div class="highlight">
+<pre><span class="x">class LeaseInfo extends SerializableRecord {</span>
+<span class="x">    public function __construct() {</span>
+<span class="x">        $this-&gt;setChildren(array(</span>
+<span class="x">    "end_of_lease_opt" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "amt_req_to-total_adv_ratio" =&gt;     array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "tot_amt_req_to_tot_adv_ratio" =&gt;   array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "adjusted_capitalized_cost" =&gt;      array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "collateral_list" =&gt;            array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "CollateralList"),));</span>
+<span class="x">        parent::__construct();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class CollateralList extends SerializableRecord {</span>
+<span class="x">    public function __construct() {</span>
+<span class="x">        $this-&gt;setArrayElements(array(</span>
+<span class="x">    "collateral_info" =&gt;            array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "CollateralInfo"),));</span>
+<span class="x">        parent::__construct();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre>
+</div>
+
+
+<p>This would render something like the following:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;collateral_list&gt;</span>
+<span class="nt">&lt;collateral_info&gt;</span>
+...
+<span class="nt">&lt;/collateral_info&gt;</span>
+<span class="nt">&lt;collateral_info&gt;</span>
+...
+<span class="nt">&lt;/collateral_info&gt;</span>
+...
+<span class="nt">&lt;/collateral_list&gt;</span>
+</pre>
+</div>
+
+
+<h4>Example 3</h4>
+
+<p>In tis example, a regular expression is defined to further validate the input.</p>
+
+<div class="highlight">
+<pre><span class="x">class PrincipalInfo extends SerializableRecord {</span>
+<span class="x">    public function __construct() {</span>
+<span class="x">        $this-&gt;setParameters(array(</span>
+<span class="x">    "customer_xref_id" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "raw_arf_request" =&gt;            array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "YesNoType"),</span>
+<span class="x">    "parsed_arf_request" =&gt;         array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "YesNoType"),));</span>
+<span class="x">        $this-&gt;setChildren(array(</span>
+<span class="x">    "primary_CB" =&gt;             array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "CreditBureau"),</span>
+<span class="x">    "alternate_CB" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "CreditBureau"),</span>
+<span class="x">    "salutation" =&gt;             array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "first_name" =&gt;             array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "middle_initial" =&gt;         array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "maternal_surname" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "last_name" =&gt;              array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "name_suffix" =&gt;            array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "birthdate" =&gt;              array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "SSN" =&gt;                array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "checking_acct" =&gt;          array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "savings_acct" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "current_acct" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "current_address" =&gt;            array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Address"),</span>
+<span class="x">    "prev_address" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Address"),</span>
+<span class="x">    "phone_number" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String", "regex" =&gt; "/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/"),</span>
+<span class="x">    "email" =&gt;              array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "fax" =&gt;                array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String", "regex" =&gt; "/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/"),</span>
+<span class="x">    "language_pref" =&gt;          array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "String"),</span>
+<span class="x">    "compliance_info" =&gt;            array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "ComplianceInfo"),</span>
+<span class="x">    "employer_info" =&gt;          array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "EmployerInfo"),</span>
+<span class="x">    "credit_reference_list" =&gt;      array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "CreditReferenceList"),</span>
+<span class="x">    "customer_alias" =&gt;         array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "CustomerAlias"),</span>
+<span class="x">    "monthly_housing_pmt" =&gt;        array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "other_monthly_cost" =&gt;         array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "prev_employer_months_of_service" =&gt;    array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "percent_ownership" =&gt;          array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "years_as_current_owner" =&gt;     array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "total_monthly_income" =&gt;       array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "net_worth" =&gt;              array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "prior_mgt_experience" =&gt;       array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "owner_equity" =&gt;           array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "Int"),</span>
+<span class="x">    "arf_info" =&gt;               array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "ARFInfo"),</span>
+<span class="x">    "generic_application_characteristics" =&gt;array("required" =&gt; 0, "nillable" =&gt; 0, "type" =&gt; "GenericApplicationCharacteristics"),));</span>
+<span class="x">        parent::__construct();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</pre>
+</div>
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">SOAPSaver maintained by <a href="https://github.com/bpanahij">bpanahij</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
