@@ -1,0 +1,119 @@
+### SOAP Saver
+SOAP Saver is designed to allow the programmer to configure Structure, Transformations, and Validation of a SOAP method, or several methods. Yes, there are standards, like XSDs and WSDLs, which when combined with configurators, will create a class defining the SOAP connections; However, they don't facilitate customization, and sometimes the WSDL or XSD you may receive is incomplete or even inaccurate. This class will allow you to set up each and every detail of your SOAP calls. 
+
+### Usage
+As an example, above, you can configure an extension of the base class to define the children and parameters/attributes of the element tag. Or you can define an element as containing an array of identical children tags.
+
+#### Example 1
+Setting up a basic Request Element, with attributes and children elements. Notice the type definitions, and  the required and nillable configurations.
+```php
+class LiquidCreditRequest extends SerializableRecord {
+	public function __construct() {
+		$this->setParameters(array(
+	"submission_xref_id" =>		array("required" => 0, "nillable" => 0, "type" => "String"),
+	"product_category_id" =>	array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"resubmission_id" =>		array("required" => 0, "nillable" => 0, "type" => "String"),
+	"customer_id" =>		array("required" => 0, "nillable" => 0, "type" => "String"),));
+		$this->setChildren(array(
+	"transaction_note" =>		array("required" => 0, "nillable" => 0, "type" => "String"),
+	"loan_amount" =>		array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"loan_term" =>			array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"loan_pmt" =>			array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"loan_down_pmt" =>		array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"loan_purpose" =>		array("required" => 0, "nillable" => 0, "type" => "String"),
+	"monthly_pmt_adjustment" =>	array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"lease_info" =>			array("required" => 0, "nillable" => 0, "type" => "LeaseInfo"),
+	"vendor_info" =>		array("required" => 0, "nillable" => 0, "type" => "VendorInfo"),
+	"vehicle_info" =>		array("required" => 0, "nillable" => 0, "type" => "VehicleInfo"),
+	"principal_list" =>		array("required" => 0, "nillable" => 0, "type" => "PrincipalList"),
+	"business_info" =>		array("required" => 0, "nillable" => 0, "type" => "BusinessInfo"),
+	"transaction_parameters" =>	array("required" => 0, "nillable" => 0, "type" => "TransactionParameters"),));
+		parent::__construct();
+	}
+}
+```
+#### Example 2
+Notice how this element has an array element as a child.
+```php
+class LeaseInfo extends SerializableRecord {
+	public function __construct() {
+		$this->setChildren(array(
+	"end_of_lease_opt" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"amt_req_to-total_adv_ratio" =>		array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"tot_amt_req_to_tot_adv_ratio" =>	array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"adjusted_capitalized_cost" =>		array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"collateral_list" =>			array("required" => 0, "nillable" => 0, "type" => "CollateralList"),));
+		parent::__construct();
+	}
+}
+
+class CollateralList extends SerializableRecord {
+	public function __construct() {
+		$this->setArrayElements(array(
+	"collateral_info" =>			array("required" => 0, "nillable" => 0, "type" => "CollateralInfo"),));
+		parent::__construct();
+	}
+}
+```
+This would render something like the following:
+```xml
+<collateral_list>
+<collateral_info>
+...
+</collateral_info>
+<collateral_info>
+...
+</collateral_info>
+...
+</collateral_list>
+```
+
+#### Example 3
+In tis example, a regular expression is defined to further validate the input.
+```php
+class PrincipalInfo extends SerializableRecord {
+	public function __construct() {
+		$this->setParameters(array(
+	"customer_xref_id" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"raw_arf_request" =>			array("required" => 0, "nillable" => 0, "type" => "YesNoType"),
+	"parsed_arf_request" =>			array("required" => 0, "nillable" => 0, "type" => "YesNoType"),));
+		$this->setChildren(array(
+	"primary_CB" =>				array("required" => 0, "nillable" => 0, "type" => "CreditBureau"),
+	"alternate_CB" =>			array("required" => 0, "nillable" => 0, "type" => "CreditBureau"),
+	"salutation" =>				array("required" => 0, "nillable" => 0, "type" => "String"),
+	"first_name" =>				array("required" => 0, "nillable" => 0, "type" => "String"),
+	"middle_initial" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"maternal_surname" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"last_name" =>				array("required" => 0, "nillable" => 0, "type" => "String"),
+	"name_suffix" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"birthdate" =>				array("required" => 0, "nillable" => 0, "type" => "String"),
+	"SSN" =>				array("required" => 0, "nillable" => 0, "type" => "String"),
+	"checking_acct" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"savings_acct" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"current_acct" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"current_address" =>			array("required" => 0, "nillable" => 0, "type" => "Address"),
+	"prev_address" =>			array("required" => 0, "nillable" => 0, "type" => "Address"),
+	"phone_number" =>			array("required" => 0, "nillable" => 0, "type" => "String", "regex" => "/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/"),
+	"email" =>				array("required" => 0, "nillable" => 0, "type" => "String"),
+	"fax" =>				array("required" => 0, "nillable" => 0, "type" => "String", "regex" => "/^[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/"),
+	"language_pref" =>			array("required" => 0, "nillable" => 0, "type" => "String"),
+	"compliance_info" =>			array("required" => 0, "nillable" => 0, "type" => "ComplianceInfo"),
+	"employer_info" =>			array("required" => 0, "nillable" => 0, "type" => "EmployerInfo"),
+	"credit_reference_list" =>		array("required" => 0, "nillable" => 0, "type" => "CreditReferenceList"),
+	"customer_alias" =>			array("required" => 0, "nillable" => 0, "type" => "CustomerAlias"),
+	"monthly_housing_pmt" =>		array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"other_monthly_cost" =>			array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"prev_employer_months_of_service" =>	array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"percent_ownership" =>			array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"years_as_current_owner" =>		array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"total_monthly_income" =>		array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"net_worth" =>				array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"prior_mgt_experience" =>		array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"owner_equity" =>			array("required" => 0, "nillable" => 0, "type" => "Int"),
+	"arf_info" =>				array("required" => 0, "nillable" => 0, "type" => "ARFInfo"),
+	"generic_application_characteristics" =>array("required" => 0, "nillable" => 0, "type" => "GenericApplicationCharacteristics"),));
+		parent::__construct();
+	}
+}
+```
+
